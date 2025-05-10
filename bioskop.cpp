@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <fstream>
 using namespace std;
 
 struct bioskop {
@@ -13,11 +14,16 @@ const int max_film = 100;
 bioskop film[max_film];
 int dataYgDiinput = 0, index = 0;
 string cari;
-void menu(), ubahkapital(string& str), searching(), input(), bubble_sort_desc(), tampilkanData(int index), bubble_sort_asdc(), sorting() ;
+void menu(), ubahkapital(string& str), searching(), input(), bubble_sort_desc(), tampilkanData(int index), bubble_sort_asdc(), sorting(), fileopen(int index) ;
 
 
-int main() {
+int main() {  
+    ifstream myfile;
+    myfile.open("tampilkandata");
+    myfile >> dataYgDiinput;
+    myfile.close();
     menu();
+    
 }
 
 
@@ -94,34 +100,64 @@ void input() {
         cout << "Input melebihi batas" << endl;
         return;
     }
-
+    ofstream data; 
+    data.open("databioskop",ios::app ); 
+    
     for (int i = 0; i < jumlahData ; i++) {
         cout << "Masukkan data ke-" << i + 1 << ":\n";
         cin.ignore();
         cout << "Judul Film\t: ";
         getline(cin, film[dataYgDiinput].judul);
         ubahkapital(film[dataYgDiinput].judul);
+        data << film[dataYgDiinput].judul;
+        data << endl;
         cout << "Genre Film\t: ";
         getline(cin, film[dataYgDiinput].genre);
+        data << film[dataYgDiinput].genre;
+        data << endl;
         cout << "Durasi (menit)\t: ";
         cin >> film[dataYgDiinput].durasi;
+        data << film[dataYgDiinput].durasi;
+        data << endl;
         cout << "Rating Film\t: ";
         cin >> film[dataYgDiinput].rating;
+        data << film[dataYgDiinput].rating;
+        data << endl;
         cout << "-----------------------" << endl;
         cout << endl;
+        ofstream myfile;
+        myfile.open("tampilkandata", ios::trunc);
         dataYgDiinput ++;
+        myfile << dataYgDiinput;
+        myfile.close();
     }
+    data.close();
     
 }
 
 //menggunakan pemanggilan rekursif
+
 void tampilkanData(int index) {
     if (dataYgDiinput == 0) {
         cout << "Belum ada data yang dimasukkan.\n";
         return;
     }
     
+
     if (index == 0) {
+        ifstream data("databioskop");
+        if(!data){
+        cout << "Gagal open file\n";
+        return;
+        }
+        for(int i = 0; i < dataYgDiinput; i++){
+        getline(data, film[i].judul);
+        getline(data, film[i].genre);
+        data >> film[i].durasi;
+        data >> film[i].rating;
+        data.ignore();
+        }
+        data.close();
         cout << "Data Film:\n";
     }
 
@@ -129,7 +165,7 @@ void tampilkanData(int index) {
     if (index >= dataYgDiinput) {
         return;
     }
-
+        
     // Menampilkan data film pada index saat ini
     cout << "\nJudul Film\t: " << film[index].judul << endl;
     cout << "Genre Film\t: " << film[index].genre << endl;
@@ -137,7 +173,8 @@ void tampilkanData(int index) {
     cout << "Rating Film\t: " << film[index].rating << endl;
     cout << "-----------------------" << endl;
     cout << endl;
-
+    
+    
     // Panggil fungsi untuk menampilkan data selanjutnya (rekursif)
     tampilkanData(index + 1);
 }
@@ -197,6 +234,7 @@ void sorting() {
         cin >> jawab;
     } while (jawab == 'y' || jawab == 'Y');
 }
+
 
 
 void ubahkapital(string& str) {
