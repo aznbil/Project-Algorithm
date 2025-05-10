@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstring>
 using namespace std;
 
 struct bioskop {
@@ -10,41 +11,111 @@ struct bioskop {
 
 const int max_film = 100;
 bioskop film[max_film];
-int dataYgDiinput = 0;
+int dataYgDiinput = 0, index = 0;
+string cari;
+void menu(), ubahkapital(string& str), searching(), input(), bubble_sort_desc(), tampilkanData(int index), bubble_sort_asdc(), sorting() ;
+
+
+int main() {
+    menu();
+}
+
+
+void menu() {
+    int pilih;
+    char jawab;
+    do {
+        system("cls");
+        cout << "\nMenu:\n";
+        cout << "1. Input Data\n";
+        cout << "2. Tampilkan Data\n";
+        cout << "3. Sorting Data\n";
+        cout << "4. Searching\n";
+        cout << "5. Exit\n";
+        cout << "Masukkan Pilihan: ";
+        cin >> pilih;
+
+        switch (pilih) {
+            case 1:
+                system("cls");
+                input();
+                break;
+            case 2:
+                system("cls");
+                tampilkanData(index);
+                break;
+            case 3:
+                system("cls");
+                sorting();
+                break;
+            case 4:
+                searching();
+                break;
+            case 5:
+                cout << "Terima Kasih\n";
+                exit(0);
+                break;
+            default:
+                cout << "Pilihan salah, coba lagi.\n";
+        }
+        cout << "Ingin kembali ke menu utama? (y/n): ";
+        cin >> jawab;
+    } while (jawab == 'y' || jawab == 'Y');
+}
+
+void searching(){
+    cin.ignore();
+    cout<<"Masukan Judul Film yang ingin anda cari : ";
+    getline(cin, cari);
+    ubahkapital(cari);
+    int i = 0;
+    bool ketemu = false ;
+
+    while( !ketemu ){
+        if(cari==film[i].judul)ketemu = true;
+        if(i = dataYgDiinput)break;
+        else i++;
+    }
+    if( ketemu )tampilkanData(index);
+    else cout<<"Film yang anda cari tidak di temukan"<<endl;
+    
+}
 
 void input() {
-    int jumlahDataBaru;
-    cout << "Berapa data yang ingin diinput? ";
-    cin >> jumlahDataBaru;
+    int jumlahData;
+    cout << "Masukan Banyak Data Yang Ingin Di Inputkan : ";
+    cin >> jumlahData;
 
-    if (jumlahDataBaru < 1) {
+    if (jumlahData < 1) {
         cout << "Input tidak valid" << endl;
         return;
     }
-    if (dataYgDiinput + jumlahDataBaru > max_film) {
+    if (dataYgDiinput + jumlahData > max_film) {
         cout << "Input melebihi batas" << endl;
         return;
     }
 
-    for (int i = dataYgDiinput; i < dataYgDiinput + jumlahDataBaru; i++) {
+    for (int i = 0; i < jumlahData ; i++) {
         cout << "Masukkan data ke-" << i + 1 << ":\n";
         cin.ignore();
         cout << "Judul Film\t: ";
-        getline(cin, film[i].judul);
+        getline(cin, film[dataYgDiinput].judul);
+        ubahkapital(film[dataYgDiinput].judul);
         cout << "Genre Film\t: ";
-        getline(cin, film[i].genre);
+        getline(cin, film[dataYgDiinput].genre);
         cout << "Durasi (menit)\t: ";
-        cin >> film[i].durasi;
+        cin >> film[dataYgDiinput].durasi;
         cout << "Rating Film\t: ";
-        cin >> film[i].rating;
+        cin >> film[dataYgDiinput].rating;
         cout << "-----------------------" << endl;
         cout << endl;
+        dataYgDiinput ++;
     }
-    dataYgDiinput += jumlahDataBaru;
+    
 }
 
 //menggunakan pemanggilan rekursif
-void tampilkanData(int index = 0) {
+void tampilkanData(int index) {
     if (dataYgDiinput == 0) {
         cout << "Belum ada data yang dimasukkan.\n";
         return;
@@ -70,7 +141,6 @@ void tampilkanData(int index = 0) {
     // Panggil fungsi untuk menampilkan data selanjutnya (rekursif)
     tampilkanData(index + 1);
 }
-
 
 void bubble_sort_desc() {
     for (int i = 0; i < dataYgDiinput - 1; i++) {
@@ -109,17 +179,16 @@ void sorting() {
                 system("cls");
                 bubble_sort_desc();
                 cout << "Data setelah sorting:\n";
-                tampilkanData();
+                tampilkanData(index);
                 break;
             case 2:
                 system("cls");
                 bubble_sort_asdc();
                 cout << "Data setelah sorting:\n";
-                tampilkanData();
+                tampilkanData(index);
                 break;
             case 3:
-                cout << "Terima Kasih\n";
-                exit(0);
+                // cout << "Terima Kasih\n";
                 break;
             default:
                 cout << "Pilihan salah, coba lagi.\n";
@@ -129,44 +198,9 @@ void sorting() {
     } while (jawab == 'y' || jawab == 'Y');
 }
 
-void menu() {
-    int pilih;
-    char jawab;
-    do {
-        system("cls");
-        cout << "\nMenu:\n";
-        cout << "1. Input Data\n";
-        cout << "2. Tampilkan Data\n";
-        cout << "3. Sorting Data\n";
-        cout << "4. Exit\n";
-        cout << "Masukkan Pilihan: ";
-        cin >> pilih;
 
-        switch (pilih) {
-            case 1:
-                system("cls");
-                input();
-                break;
-            case 2:
-                system("cls");
-                tampilkanData();
-                break;
-            case 3:
-                system("cls");
-                sorting();
-                break;
-            case 4:
-                cout << "Terima Kasih\n";
-                exit(0);
-                break;
-            default:
-                cout << "Pilihan salah, coba lagi.\n";
-        }
-        cout << "Ingin kembali ke menu utama? (y/n): ";
-        cin >> jawab;
-    } while (jawab == 'y' || jawab == 'Y');
-}
-
-int main() {
-    menu();
+void ubahkapital(string& str) {
+    for (char& c : str) {
+        c = toupper(c);
+    }
 }
