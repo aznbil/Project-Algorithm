@@ -3,6 +3,12 @@
 #include <fstream>
 using namespace std;
 
+
+//Nama: M.Ahsan R.S (123240246)
+//Nama: Aziz Nabil Putra Dermawan (123240239)
+//Nama: Kevin Prasetya (123240231)
+
+
 struct bioskop {
     string judul;
     string genre;
@@ -13,21 +19,83 @@ struct bioskop {
 const int max_film = 100;
 bioskop film[max_film];
 int dataYgDiinput = 0, index = 0;
-string cari;
-void menu(), ubahkapital(string& str), searching(), input(), bubble_sort_desc(), tampilkanData(int index), bubble_sort_asdc(), sorting(), fileopen(int index) ;
-
+string cari, username, password;
+void menu(), ubahkapital(string& str), searching(), input(), bubble_sort_desc(), tampilkanData(bioskop* film, int index), bubble_sort_asdc(), sorting(), fileopen(int index) ;
+void buat_akun(), login(), loginpage(), menu_user(), menu_admin(), beli(), riwayat_pembelian();
 
 int main() {  
     ifstream myfile;
     myfile.open("tampilkandata");
     myfile >> dataYgDiinput;
     myfile.close();
-    menu();
-    
+    loginpage();  
 }
 
+void loginpage(){
+    int pilih;
+    
+    cout<<"1. Login"<<endl;
+    cout<<"2. Buat Akun"<<endl;
+    cout<<"======================="<<endl;
+    cout<<"Apa yang ingin anda lakukan : ";
+    cin>>pilih;
+    switch(pilih){
+        case 1 : 
+            login();
+            break;
+        case 2 :
+            buat_akun();
+            break;
+        default : 
+            cout << "Input tidak tersedia" << endl;
+            system("pause");
+            break;
+    }
+}
 
-void menu() {
+void login(){
+    string usernamesementara, passwordsementara, verifikasiusername, verifikasipassword, verifikasiperan;
+    bool berhasil;
+    ifstream login;
+    login.open("akun.txt");
+    berhasil = false;
+    for(int i = 2 ; i >= 0 ; i--){
+        
+        cout<<"Masukan Username anda \t: ";
+        cin>>username;
+        cout<<"Masukan Password anda \t: ";
+        cin>>password;
+        while(!login.eof()){
+            login >> verifikasiusername;
+            login >> verifikasipassword;
+            login >> verifikasiperan;
+            if((verifikasiusername == username) && (verifikasipassword == password)){
+                cout<<endl<<"anda berhasil login"<<endl<<endl;
+                berhasil = true;
+                system("pause");
+                break;
+            }
+        }
+        if((i == 0) && (!berhasil)){
+            cout<<"Kesempatan Login anda Habis, Silahkan Coba Kembali Lain Kali"<<endl;
+            exit(0);
+        }else if(!berhasil){
+            cout<<"Username atau Password anda salah"<<endl;
+            cout<<"Anda Masih memiliki "<< i <<" kesempatan lagi"<<endl;
+            cout<<"Silahkan mengisi kembali"<<endl;
+            cout<<endl;
+            system("pause");
+        }
+         if (berhasil){
+            break;
+        }
+    }
+    login.close();
+    if(verifikasiperan == "user")menu_user();
+    else if(verifikasiperan == "admin")menu_admin();
+}
+
+void menu_admin() {
     int pilih;
     char jawab;
     do {
@@ -48,7 +116,7 @@ void menu() {
                 break;
             case 2:
                 system("cls");
-                tampilkanData(index);
+                tampilkanData(film, index);
                 break;
             case 3:
                 system("cls");
@@ -69,6 +137,44 @@ void menu() {
     } while (jawab == 'y' || jawab == 'Y');
 }
 
+void menu_user(){
+    int pilih;
+    cout << "1. Beli " << endl;
+    cout << "2. Riwayat Pembelian" << endl;
+    cout << "3. Keluar " << endl;
+    switch(pilih){
+        case 1 : 
+            beli();
+            break;
+        case 2 :
+            riwayat_pembelian();
+            break;
+        case 3 : 
+            return;
+            break;
+        default :
+            cout << "Input tidak tersedia" << endl;
+            break;
+    }
+}
+
+void beli(){
+    int selesai_beli;
+        do{
+        system("cls");
+        tampilkanData(film, index);
+        cout<<endl;
+        cout<<"Barang Nomor Berapa Yang Ingin Anda Beli : ";
+        cin>>selesai_beli;
+        selesai_beli--;
+        if(selesai_beli < dataYgDiinput){
+            cout<<"Barang yang anda pilih tidak ada di etalase"<<endl;
+            cout<<"Silahkan pilih kembali"<<endl;
+        }
+    }while(selesai_beli >= dataYgDiinput);
+    
+}
+
 void searching(){
     cin.ignore();
     cout<<"Masukan Judul Film yang ingin anda cari : ";
@@ -82,7 +188,7 @@ void searching(){
         if(i = dataYgDiinput)break;
         else i++;
     }
-    if( ketemu )tampilkanData(index);
+    if( ketemu )tampilkanData(film, index);
     else cout<<"Film yang anda cari tidak di temukan"<<endl;
     
 }
@@ -137,7 +243,7 @@ void input() {
 
 //menggunakan pemanggilan rekursif
 
-void tampilkanData(int index) {
+void tampilkanData(bioskop* film, int index) {
     if (dataYgDiinput == 0) {
         cout << "Belum ada data yang dimasukkan.\n";
         return;
@@ -176,7 +282,7 @@ void tampilkanData(int index) {
     
     
     // Panggil fungsi untuk menampilkan data selanjutnya (rekursif)
-    tampilkanData(index + 1);
+    tampilkanData(film, index + 1);
 }
 
 void bubble_sort_desc() {
@@ -216,13 +322,13 @@ void sorting() {
                 system("cls");
                 bubble_sort_desc();
                 cout << "Data setelah sorting:\n";
-                tampilkanData(index);
+                tampilkanData(film ,index);
                 break;
             case 2:
                 system("cls");
                 bubble_sort_asdc();
                 cout << "Data setelah sorting:\n";
-                tampilkanData(index);
+                tampilkanData(film, index);
                 break;
             case 3:
                 // cout << "Terima Kasih\n";
@@ -235,7 +341,43 @@ void sorting() {
     } while (jawab == 'y' || jawab == 'Y');
 }
 
+void buat_akun(){
+    string  peran; 
+    int siapa;
+    system("cls");
+    cout<<"Jenis Peran"<<endl;
+    cout<<"1. user"<<endl;
+    cout<<"2. admin"<<endl;
+    cout<<"-----------------"<<endl;
+    cout<<"Siapakah Anda : ";
+    cin>>siapa;
+    if(siapa == 1 )peran = "user";
+    else if(siapa == 2)peran = "admin";
+    
+    cout    <<"Masukan Username Anda : ";
+    cin     >>username;
+    cout    <<"Masukan Password Anda : ";
+    cin     >>password;
 
+    ofstream akun;
+    akun.open("akun.txt", ios::app);
+    akun    << username;
+    akun    << endl;
+    akun    << password;
+    akun    << endl;
+    akun    << peran;
+    akun    << endl;
+
+    if(akun){
+        cout<<"Selamat Akun anda sudah di buat"<<endl;
+        cout<<"Silahkan Lanjut ke menu login"<<endl;
+        system("pause");
+        login();
+    }else{
+        cout<<"Terjadi kesalahan, silahkan coba lagi"<<endl;
+    }
+    akun.close();
+}
 
 void ubahkapital(string& str) {
     for (char& c : str) {
