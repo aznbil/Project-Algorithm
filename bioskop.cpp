@@ -34,8 +34,9 @@ int main() {
 
 void loginpage(){
     int pilih;
+    char jawab;
+    do{
     system("cls");
-    
     cout<<"1. Login"<<endl;
     cout<<"2. Buat Akun"<<endl;
     cout<<"======================="<<endl;
@@ -53,6 +54,9 @@ void loginpage(){
             system("pause");
             break;
     }
+    cout << "Ingin kembali ke menu login? (y/n): ";
+    cin >> jawab;
+    }while(jawab == 'y' || 'Y');
 }
 
 void login(){
@@ -129,8 +133,7 @@ void menu_admin() {
                 searching();
                 break;
             case 5:
-                cout << "Terima Kasih\n";
-                exit(0);
+                return;
                 break;
             default:
                 cout << "Pilihan salah, coba lagi.\n";
@@ -142,26 +145,31 @@ void menu_admin() {
 
 void menu_user(){
     int pilih;
-    system("cls");
-    cout << "1. Beli " << endl;
-    cout << "2. Riwayat Pembelian" << endl;
-    cout << "3. Keluar " << endl;
-    cout << "Pilih : " ;
-    cin >> pilih;
-    switch(pilih){
-        case 1 : 
-            beli();
-            break;
-        case 2 :
-            riwayat_pembelian();
-            break;
-        case 3 : 
-            return;
-            break;
-        default :
-            cout << "Input tidak tersedia" << endl;
-            break;
-    }
+    char yakin;
+        do{
+        system("cls");
+        cout << "1. Beli " << endl;
+        cout << "2. Riwayat Pembelian" << endl;
+        cout << "3. Keluar " << endl;
+        cout << "Pilih : " ;
+        cin >> pilih;
+        switch(pilih){
+            case 1 : 
+                beli();
+                break;
+            case 2 :
+                riwayat_pembelian();
+                break;
+            case 3 : 
+                return;
+                break;
+            default :
+                cout << "Input tidak tersedia" << endl;
+                break;
+        }
+        cout<<"Apakah anda masih ingin lanjut berbelanja? (Y/N) : ";
+        cin>>yakin;
+    }while(yakin == 'y' || yakin =='Y');
 }
 
 void beli(){
@@ -404,7 +412,7 @@ void bubble_sort_asdc() {
 void sorting() {
     int pilih;
     char jawab;
-    do{
+    
         system("cls");
         cout << "\nMenu:\n";
         cout << "1. Bubble Sort DESC(Berdasarkan Rating)\n";
@@ -427,14 +435,11 @@ void sorting() {
                 tampilkanData(film, index);
                 break;
             case 3:
-                // cout << "Terima Kasih\n";
+                return;
                 break;
             default:
                 cout << "Pilihan salah, coba lagi.\n";
         }
-        cout << "Ingin melanjutkan? (y/n): ";
-        cin >> jawab;
-    } while (jawab == 'y' || jawab == 'Y');
 }
 
 void buat_akun(){
