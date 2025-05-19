@@ -1,1 +1,1 @@
-beli();
+login.close();

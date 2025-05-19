@@ -1,11 +1,12 @@
 #include <iostream>
 #include <cstring>
 #include <fstream>
+#include <ctime>
 using namespace std;
 
-
+//ANGGOTA KELOMPOK 
 //Nama: M.Ahsan R.S (123240246)
-//Nama: Aziz Nabil Putra Dermawan (123240239)
+//Nama: Aziz Nabil Putra Darmawan (123240239)
 //Nama: Kevin Prasetya (123240231)
 
 
@@ -33,6 +34,7 @@ int main() {
 
 void loginpage(){
     int pilih;
+    system("cls");
     
     cout<<"1. Login"<<endl;
     cout<<"2. Buat Akun"<<endl;
@@ -54,13 +56,13 @@ void loginpage(){
 }
 
 void login(){
+    system("cls");
     string usernamesementara, passwordsementara, verifikasiusername, verifikasipassword, verifikasiperan;
     bool berhasil;
-    ifstream login;
-    login.open("akun.txt");
     berhasil = false;
     for(int i = 2 ; i >= 0 ; i--){
-        
+        ifstream login;
+        login.open("akun.txt");
         cout<<"Masukan Username anda \t: ";
         cin>>username;
         cout<<"Masukan Password anda \t: ";
@@ -89,8 +91,8 @@ void login(){
          if (berhasil){
             break;
         }
+        login.close();
     }
-    login.close();
     if(verifikasiperan == "user")menu_user();
     else if(verifikasiperan == "admin")menu_admin();
 }
@@ -98,6 +100,7 @@ void login(){
 void menu_admin() {
     int pilih;
     char jawab;
+    system("cls");
     do {
         system("cls");
         cout << "\nMenu:\n";
@@ -139,9 +142,12 @@ void menu_admin() {
 
 void menu_user(){
     int pilih;
+    system("cls");
     cout << "1. Beli " << endl;
     cout << "2. Riwayat Pembelian" << endl;
     cout << "3. Keluar " << endl;
+    cout << "Pilih : " ;
+    cin >> pilih;
     switch(pilih){
         case 1 : 
             beli();
@@ -159,20 +165,110 @@ void menu_user(){
 }
 
 void beli(){
-    int selesai_beli;
-        do{
+    system("cls");
+    int banyak,jumlah=0;
+    char konfirmasi;
+    bool check=false;
+    string nama;
+    // Ambil hari saat ini
+    time_t now = time(0);
+    tm *ltm = localtime(&now);
+    int hari = ltm->tm_wday; // 0 = Minggu, 1 = Senin, ..., 6 = Sabtu
+    // strftime(output,50,"%A");
+    // Menentukan apakah weekday atau weekend
+    bool isWeekend;
+    int harga_tiket;
+    string hari_str;
+    if (hari == 0 || hari == 6) {
+        isWeekend = true;
+        harga_tiket = 50000;
+        hari_str = "Weekend";
+    } else {
+        isWeekend = false;
+        harga_tiket = 32000;
+        hari_str = "Weekday";
+    }
+    do{
         system("cls");
+        // ifstream beli;
+        // beli.open("databioskop");
         tampilkanData(film, index);
         cout<<endl;
-        cout<<"Barang Nomor Berapa Yang Ingin Anda Beli : ";
-        cin>>selesai_beli;
-        selesai_beli--;
-        if(selesai_beli < dataYgDiinput){
-            cout<<"Barang yang anda pilih tidak ada di etalase"<<endl;
-            cout<<"Silahkan pilih kembali"<<endl;
+        cout <<"Hari ini adalah   : " << hari_str << endl;
+        cout<<"Masukkan nama Film : ";
+        cin>>nama;
+        ubahkapital(nama);
+        for(int i=0 ; i<dataYgDiinput ; i++){
+            // beli >> film[i].judul;
+            if((film[i].judul != nama ) && (i==dataYgDiinput)){
+                cout<<"Barang yang anda pilih tidak ada di etalase"<<endl;
+                cout<<"Silahkan pilih kembali"<<endl;
+                system("pause");
+                break;
+            }else if(film[i].judul == nama){
+                    system("cls");
+                    cout<<"Ada perbedaan harga untuk weekday and weekend"<<endl;
+                    cout<<"Weekday = Rp.32000"<<endl;
+                    cout<<"Weekend = Rp.50000"<<endl;
+                    cout<<"======================Ticket======================"<<endl;
+                    cout<<"Judul \t: "<<film[i].judul<<endl;
+                    cout<<"Genre \t: "<<film[i].genre <<endl;
+                    cout<<"Durasi\t: "<<film[i].durasi<<endl;
+                    cout<<"Harga \t: "<<harga_tiket<<endl;
+                    cout<<"==================================================="<<endl;
+                    cout<<"Masukan Jumlah Tiket Yang Ingin Di Beli : ";
+                    cin>>banyak;
+                    jumlah = harga_tiket*banyak;
+                    system("cls");
+                    cout<<"======================Ticket======================"<<endl;
+                    cout<<"Judul \t: "<<film[i].judul<<endl;
+                    cout<<"Genre \t: "<<film[i].genre <<endl;
+                    cout<<"Durasi\t: "<<film[i].durasi<<endl;
+                    cout<<"Harga \t: "<<harga_tiket<<endl;
+                    cout<<"==================================================="<<endl;
+                    cout<<"Jumlah Yang Harus Anda Bayar : "<< "Rp." <<jumlah<<endl;   
+                    cout<<"Konfirmasi Pembelian ? (Y/N) : ";
+                    cin>>konfirmasi;
+                    konfirmasi = toupper(konfirmasi);
+                    if(konfirmasi == 'Y'){
+                        cout<<"Silahkan Menikmati :)"<<endl;
+                        cout<<"Terima Kasih"<<endl;
+                        system("pause");
+                        ofstream riyawat("struk_pembelian"+username+".txt", ios::app);
+                        riyawat << film[i].judul <<" "<< film[i].genre <<" "<< film[i].durasi<<" "<<banyak<<" "<<harga_tiket<<" "<< jumlah<<endl;
+                        riyawat.close();
+                        check = true;
+                        break;
+                    }else{
+                        cout<<"Pembelian dibatalkan"<<endl;
+                    }
+                }
+            }
+    }while((konfirmasi != 'Y') && (check != true));
+}
+
+void riwayat_pembelian(){
+    string judul, genre;
+    int durasi,banyak,harga,jumlah;
+    system("cls");
+    ifstream file("struk_pembelian"+username+".txt");
+    if(!file){
+        cout << "Anda belum melakukan transaksi" << endl;
+        return;
+    }else{
+        while(!file.eof()){
+            file >>judul >> genre >> durasi >> banyak >> harga >> jumlah;
+            cout<<"============================================="<<endl;
+            cout<<"Judul \t\t: "<< judul <<endl;
+            cout<<"Genre \t\t: "<< genre <<endl;
+            cout<<"Durasi\t\t: "<< durasi <<endl;
+            cout<<"Banyak\t\t: "<< banyak <<endl;
+            cout<<"Harga tiket\t: " << harga <<endl;
+            cout<<"Total Harga\t: " << jumlah<<endl;
+            cout<<"============================================="<<endl;
+            cout<<endl;
         }
-    }while(selesai_beli >= dataYgDiinput);
-    
+    }
 }
 
 void searching(){
