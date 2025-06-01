@@ -21,15 +21,35 @@ const int max_film = 100;
 bioskop film[max_film];
 int dataYgDiinput = 0, index = 0;
 string cari, username, password;
-void menu(), ubahkapital(string& str), searching(), input(), bubble_sort_desc(), tampilkanData(bioskop* film, int index), bubble_sort_asdc(), sorting(), fileopen(int index) ;
-void buat_akun(), login(), loginpage(), menu_user(), menu_admin(), beli(), riwayat_pembelian();
+void menu(), ubahkapital(string& str),  input(), bubble_sort_desc(), tampilkanData(bioskop* film, int index), bubble_sort_asdc(), sorting(), fileopen(int index) ;
+void buat_akun(), login(), loginpage(), menu_user(), menu_admin(), beli(), riwayat_pembelian(), update_data();
+void  readFile(), deletefile();
+int searching();
 
 int main() {  
     ifstream myfile;
     myfile.open("tampilkandata");
     myfile >> dataYgDiinput;
+    readFile();
     myfile.close();
+
     loginpage();  
+}
+
+void readFile(){
+    ifstream data("databioskop");
+        if(!data){
+        cout << "Gagal open file\n";
+        return;
+        }
+        for(int i = 0; i < dataYgDiinput; i++){
+        getline(data, film[i].judul);
+        getline(data, film[i].genre);
+        data >> film[i].durasi;
+        data >> film[i].rating;
+        data.ignore();
+        }
+        data.close();
 }
 
 void loginpage(){
@@ -112,7 +132,9 @@ void menu_admin() {
         cout << "2. Tampilkan Data\n";
         cout << "3. Sorting Data\n";
         cout << "4. Searching\n";
-        cout << "5. Exit\n";
+        cout << "5. Update Data\n";
+        cout << "6. Delete Data\n";
+        cout << "7. Exit\n";
         cout << "Masukkan Pilihan: ";
         cin >> pilih;
 
@@ -133,6 +155,11 @@ void menu_admin() {
                 searching();
                 break;
             case 5:
+                update_data();
+                break;
+            case 6:deletefile();
+                break;
+            case 7:exit(0);
                 return;
                 break;
             default:
@@ -279,22 +306,35 @@ void riwayat_pembelian(){
     }
 }
 
-void searching(){
-    cin.ignore();
+int searching(){
     cout<<"Masukan Judul Film yang ingin anda cari : ";
+    cin.ignore();
     getline(cin, cari);
     ubahkapital(cari);
     int i = 0;
     bool ketemu = false ;
 
     while( !ketemu ){
-        if(cari==film[i].judul)ketemu = true;
-        if(i = dataYgDiinput)break;
+        if(cari==film[i].judul){
+            ketemu = true;
+            i == dataYgDiinput;
+            break;
+        }
+        // if(i == dataYgDiinput)break;
         else i++;
     }
-    if( ketemu )tampilkanData(film, index);
-    else cout<<"Film yang anda cari tidak di temukan"<<endl;
-    
+    if( !ketemu ){
+        cout<<"Film yang anda cari tidak di temukan"<<endl;}
+    else {
+        cout << "\nJudul Film\t: " << film[i].judul << endl;
+        cout << "Genre Film\t: " << film[i].genre << endl;
+        cout << "Durasi (menit)\t: " << film[i].durasi << " menit" << endl;
+        cout << "Rating Film\t: " << film[i].rating << endl;
+        cout << "-----------------------" << endl;
+        cout << endl;
+    }
+    return i;
+    // return film[i].judul;
 }
 
 void input() {
@@ -345,6 +385,58 @@ void input() {
     
 }
 
+void update_data(){
+    int i = searching();
+    int update;
+    cout <<"1. Nama "<<endl;
+    cout <<"2. Genre"<<endl;
+    cout <<"3. Durasi"<<endl;
+    cout <<"4. Rating"<<endl;
+    cout <<"=========================="<<endl;
+    cout <<"Silahkan Pilih Yang Ingin Anda Edit : ";
+    cin>>update;
+    switch(update){
+        case 1:
+        cin.ignore();
+        cout<<"Masukan Nama Baru : ";
+        getline(cin, film[i].judul);
+        break;
+
+        case 2:
+        cout<<"Masukan Genre Baru : ";
+        cin.ignore();
+        getline(cin, film[i].genre);
+        break;
+
+        case 3:
+        cout << "Masukkan Durasi Baru :";
+        cin >> film[i].durasi;
+        break;
+
+        case 4:
+        cout << "Masukkan Rating Baru :";
+        cin >> film[i].rating;  
+        break;
+
+        default:
+        cout << "Pilihan tidak tersedia. Silahkan ulangi.";
+        break;
+    } 
+    ofstream data; 
+    data.open("databioskop",ios::trunc ); 
+    for(int i=0 ; i<dataYgDiinput ; i++){
+        data << film[i].judul;
+        data << endl;
+        data << film[i].genre;
+        data << endl;
+        data << film[i].durasi;
+        data << endl;
+        data << film[i].rating;
+        data << endl;
+    }
+    
+}
+
 //menggunakan pemanggilan rekursif
 
 void tampilkanData(bioskop* film, int index) {
@@ -355,19 +447,6 @@ void tampilkanData(bioskop* film, int index) {
     
 
     if (index == 0) {
-        ifstream data("databioskop");
-        if(!data){
-        cout << "Gagal open file\n";
-        return;
-        }
-        for(int i = 0; i < dataYgDiinput; i++){
-        getline(data, film[i].judul);
-        getline(data, film[i].genre);
-        data >> film[i].durasi;
-        data >> film[i].rating;
-        data.ignore();
-        }
-        data.close();
         cout << "Data Film:\n";
     }
 
@@ -439,7 +518,7 @@ void sorting() {
                 break;
             default:
                 cout << "Pilihan salah, coba lagi.\n";
-        }
+        } 
 }
 
 void buat_akun(){
@@ -479,6 +558,39 @@ void buat_akun(){
     }
     akun.close();
 }
+
+void deletefile(){
+    string nama;
+    cout<<"Masukan Nama Film yang ingin di hapus : ";
+    cin>>nama;
+    ubahkapital(nama);
+    for(int i=0 ; i<dataYgDiinput ; i++){
+        for(int j=i ; j<=dataYgDiinput ; j++){
+            if(nama == film[i].judul){
+                swap(film[i], film[j]);
+            }
+        }
+    }dataYgDiinput--;
+
+    ofstream data; 
+    data.open("databioskop",ios::trunc ); 
+    for(int i=0 ; i<dataYgDiinput ; i++){
+        data << film[i].judul;
+        data << endl;
+        data << film[i].genre;
+        data << endl;
+        data << film[i].durasi;
+        data << endl;
+        data << film[i].rating;
+        data << endl;
+    }
+    ofstream myfile;
+    myfile.open("tampilkandata", ios::trunc);
+    myfile << dataYgDiinput;
+    myfile.close();
+}
+
+
 
 void ubahkapital(string& str) {
     for (char& c : str) {
