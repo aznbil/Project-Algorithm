@@ -571,7 +571,6 @@ void deletefile(){
             }
         }
     }dataYgDiinput--;
-
     ofstream data; 
     data.open("databioskop",ios::trunc ); 
     for(int i=0 ; i<dataYgDiinput ; i++){
@@ -589,8 +588,6 @@ void deletefile(){
     myfile << dataYgDiinput;
     myfile.close();
 }
-
-
 
 void ubahkapital(string& str) {
     for (char& c : str) {
