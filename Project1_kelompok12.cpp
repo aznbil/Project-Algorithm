@@ -19,12 +19,12 @@ struct bioskop {
 
 const int max_film = 100;
 bioskop film[max_film];
-int dataYgDiinput = 0, index = 0;
+int dataYgDiinput = 0;
 string cari, username, password;
-void menu(), ubahkapital(string& str),  input(), bubble_sort_desc(), tampilkanData(bioskop* film, int index), bubble_sort_asdc(), sorting(), fileopen(int index) ;
+void menu(), ubahkapital(string& str),  input(), bubble_sort_desc(), tampilkanData(bioskop* film, int index = 0), sorting(), fileopen(int index) ;
 void buat_akun(), login(), loginpage(), menu_user(), menu_admin(), beli(), riwayat_pembelian(), update_data();
-void  readFile(), deletefile();
-int searching();
+void  readFile(), deletefile(), insertion_sort(), quick_sort(int low, int high), shell_sort();
+int searching(), partion(int low, int high);
 
 int main() {  
     ifstream myfile;
@@ -145,7 +145,7 @@ void menu_admin() {
                 break;
             case 2:
                 system("cls");
-                tampilkanData(film, index);
+                tampilkanData(film, 0);
                 break;
             case 3:
                 system("cls");
@@ -227,7 +227,7 @@ void beli(){
         system("cls");
         // ifstream beli;
         // beli.open("databioskop");
-        tampilkanData(film, index);
+        tampilkanData(film, 0);
         cout<<endl;
         cout <<"Hari ini adalah   : " << hari_str << endl;
         cout<<"Masukkan nama Film : ";
@@ -478,11 +478,50 @@ void bubble_sort_desc() {
     }
 }
 
-void bubble_sort_asdc() {
-    for (int i = 0; i < dataYgDiinput - 1; i++) {
-        for (int j = 0; j < dataYgDiinput - i - 1; j++) {
-            if (film[j].rating > film[j + 1].rating) { // Urutkan terkecil ke terbesar
-                swap(film[j], film[j + 1]);
+void insertion_sort(){
+    int i, key, j;
+    for (i = 1; i < dataYgDiinput; i++){ 
+		bioskop key = film[i]; 
+		j = i - 1; 
+		while (j >= 0 && film[j].rating > key.rating) { 
+			film[j + 1] = film[j]; 
+			j--; 
+		} 
+		film[j + 1] = key; 
+	} 
+}
+
+int partion(int low, int high){
+    bioskop pivot = film[high];
+    int i = (low - 1);
+
+    for(int j = low; j <= high - 1; j++){
+        if(film[j].durasi > pivot.durasi){
+            i++;
+            swap(film[i], film[j]);
+        }
+    }
+    swap(film[i+1], film[high]);
+    return i + 1;
+}
+
+void quick_sort( int low, int high){
+    if(low < high){
+        int pi = partion(low, high);
+        quick_sort(low, pi - 1);
+        quick_sort(pi + 1, high);
+    }
+}
+
+void shell_sort(){
+    int gap, j, k;
+    for(int gap = dataYgDiinput/2; gap > 0; gap = gap/2){
+        for(j = gap; j < dataYgDiinput; j++){
+            for(k = j - gap; k >= 0; k -= gap){
+                if(film[k+gap].durasi >= film[k].durasi)
+                break;
+                else
+                swap(film[k+gap], film[k]);
             }
         }
     }
@@ -494,9 +533,11 @@ void sorting() {
     
         system("cls");
         cout << "\nMenu:\n";
-        cout << "1. Bubble Sort DESC(Berdasarkan Rating)\n";
-        cout << "2. Bubble Sort ASDC(Berdasarkan Rating)\n";
-        cout << "3. Exit\n";
+        cout << "1. Berdasarkan rating (desc)\n";
+        cout << "2. Berdasarkan rating (asdc)\n";
+        cout << "3. Berdasarkan durasi (desc)\n";
+        cout << "4. Berdasarkan durasi (asdc)\n";
+        cout << "5. Exit\n";
         cout << "Masukkan Pilihan: ";
         cin >> pilih;
 
@@ -505,15 +546,23 @@ void sorting() {
                 system("cls");
                 bubble_sort_desc();
                 cout << "Data setelah sorting:\n";
-                tampilkanData(film ,index);
+                tampilkanData(film ,0);
                 break;
             case 2:
                 system("cls");
-                bubble_sort_asdc();
+                insertion_sort();
                 cout << "Data setelah sorting:\n";
-                tampilkanData(film, index);
+                tampilkanData(film, 0);
                 break;
             case 3:
+                quick_sort(0, dataYgDiinput - 1);
+                tampilkanData(film, 0);
+                break;
+            case 4 :
+                shell_sort();
+                tampilkanData(film, 0);
+                break;
+            case 5 : 
                 return;
                 break;
             default:
