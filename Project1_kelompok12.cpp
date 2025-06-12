@@ -346,7 +346,7 @@ int searching(){
 }
 
 int Binary(string judul){
-    shell_sort();
+    shell_sort(); // di urutkan dahulu
     int left = 0;
     int right = dataYgDiinput - 1;
 
