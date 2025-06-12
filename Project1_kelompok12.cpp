@@ -23,8 +23,8 @@ int dataYgDiinput = 0;
 string cari, username, password;
 void menu(), ubahkapital(string& str),  input(), bubble_sort_desc(), tampilkanData(bioskop* film, int index = 0), sorting(), fileopen(int index) ;
 void buat_akun(), login(), loginpage(), menu_user(), menu_admin(), beli(), riwayat_pembelian(), update_data();
-void  readFile(), deletefile(), insertion_sort(), quick_sort(int low, int high), shell_sort();
-int searching(), partion(int low, int high);
+void  readFile(), deletefile(), insertion_sort(), quick_sort(int low, int high), shell_sort(), binary_search();
+int searching(), partion(int low, int high), Binary(string judul);
 
 int main() {  
     ifstream myfile;
@@ -152,7 +152,15 @@ void menu_admin() {
                 sorting();
                 break;
             case 4:
-                searching();
+                cout << "1. Sequential Search\n" ;
+                cout << "2. Binary Search\n";
+                cout << "Pilih : ";
+                cin >> pilih;
+                if(pilih == 1){
+                    searching();
+                }if(pilih == 2){
+                    binary_search();
+                }
                 break;
             case 5:
                 update_data();
@@ -335,6 +343,44 @@ int searching(){
     }
     return i;
     // return film[i].judul;
+}
+
+int Binary(string judul){
+    shell_sort();
+    int left = 0;
+    int right = dataYgDiinput - 1;
+
+    while (left <= right){
+        int mid = left + (right - left)/2;
+        if(film[mid].judul == judul){
+            return mid;
+        }
+        if(film[mid].judul < judul){
+            left = mid + 1;
+        }else{
+            right = mid - 1;
+        }
+    }
+    return -1; //tidak ditemukan
+}
+
+void binary_search(){
+    cout<<"Masukan Judul Film yang ingin anda cari : ";
+    cin.ignore();
+    getline(cin, cari);
+    ubahkapital(cari);
+
+    int hasil = Binary(cari);
+    if(hasil != -1){
+        cout << "\nJudul Film\t: " << film[hasil].judul << endl;
+        cout << "Genre Film\t: " << film[hasil].genre << endl;
+        cout << "Durasi (menit)\t: " << film[hasil].durasi << " menit" << endl;
+        cout << "Rating Film\t: " << film[hasil].rating << endl;
+        cout << "-----------------------" << endl;
+        cout << endl;
+    }else{
+        cout << "Film yang anda cari tidak di temukan\n";
+    }
 }
 
 void input() {
