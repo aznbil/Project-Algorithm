@@ -10,6 +10,10 @@ using namespace std;
 //Nama: Kevin Prasetya (123240231)
 
 
+//Revisi
+//1. Menambahkan Binary search
+//2. Menambahkan Sorting
+
 struct bioskop {
     string judul;
     string genre;
@@ -22,8 +26,8 @@ bioskop film[max_film];
 int dataYgDiinput = 0;
 string cari, username, password;
 void menu(), ubahkapital(string& str),  input(), bubble_sort_desc(), tampilkanData(bioskop* film, int index = 0), sorting(), fileopen(int index) ;
-void buat_akun(), login(), loginpage(), menu_user(), menu_admin(), beli(), riwayat_pembelian(), update_data();
-void  readFile(), deletefile(), insertion_sort(), quick_sort(int low, int high), shell_sort(), binary_search();
+void buat_akun(), login(), loginpage(), menu_user(), menu_admin(), beli(), riwayat_pembelian(), update_data(), merge(bioskop * film, int low, int high, int mid);
+void  readFile(), deletefile(), insertion_sort(), quick_sort(int low, int high), shell_sort(), binary_search(), selection_sort(), merge_sort(bioskop * film, int low, int high);
 int searching(), partion(int low, int high), Binary(string judul);
 
 int main() {  
@@ -573,6 +577,75 @@ void shell_sort(){
     }
 }
 
+void selection_sort(){
+    int i, j, min_idx;
+    for(i = 0; i < dataYgDiinput; i++){
+        min_idx = i;
+        for(j = i + 1; j < dataYgDiinput; j++)
+        if(film[j].judul <= film[min_idx].judul)
+                min_idx = j;
+            swap(film[j], film[min_idx]);
+    }
+}
+
+void merge(bioskop * film, int low, int high, int mid){
+    int i, j, k; 
+    string temp[high - low + 1];
+    i = low;
+    k = 0;
+    j = mid + 1;
+
+    while (i <= mid && j <= high)
+    {
+      if (film[i].judul < film[j].judul)
+	{
+	  temp[k] = film[i].judul;
+	  k++;
+	  i++;
+	}
+      else
+	{
+	  temp[k] = film[j].judul;
+	  k++;
+	  j++;
+	}
+    }
+
+  // Insert all the remaining values from i to mid into temp[].
+  while (i <= mid)
+    {
+      temp[k] = film[i].judul;
+      k++;
+      i++;
+    }
+
+  // Insert all the remaining values from j to high into temp[].
+  while (j <= high)
+    {
+      temp[k] = film[j].judul;
+      k++;
+      j++;
+    }
+
+
+  // Assign sorted data stored in temp[] to a[].
+  for (i = low; i <= high; i++)
+    {
+      film[i].judul = temp[i - low];
+    }
+}
+
+void merge_sort(bioskop * film, int low, int high){
+    int mid;
+    if(low < high){
+        mid = (low + high) / 2;
+        merge_sort(film, low, mid);
+        merge_sort(film, mid + 1, high);
+
+        merge (film, low, high, mid);
+    }
+}
+
 void sorting() {
     int pilih;
     char jawab;
@@ -583,7 +656,9 @@ void sorting() {
         cout << "2. Berdasarkan rating (asdc)\n";
         cout << "3. Berdasarkan durasi (desc)\n";
         cout << "4. Berdasarkan durasi (asdc)\n";
-        cout << "5. Exit\n";
+        cout << "5. Berdasarkan Judul  (desc)\n";
+        cout << "6. Berdasarkan Judul  (asdc)\n";
+        cout << "7. Exit\n";
         cout << "Masukkan Pilihan: ";
         cin >> pilih;
 
@@ -608,7 +683,17 @@ void sorting() {
                 shell_sort();
                 tampilkanData(film, 0);
                 break;
-            case 5 : 
+            case 5 :
+                system("cls");
+                selection_sort();
+                cout << "Data setelah sorting:\n";
+                tampilkanData(film, 0);
+                break;
+            case 6 : 
+                system("cls");
+                merge_sort(film, 0, dataYgDiinput - 1);
+                tampilkanData(film, 0);
+            case 7 : 
                 return;
                 break;
             default:
