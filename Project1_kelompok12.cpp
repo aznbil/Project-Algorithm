@@ -582,9 +582,9 @@ void selection_sort(){
     for(i = 0; i < dataYgDiinput; i++){
         min_idx = i;
         for(j = i + 1; j < dataYgDiinput; j++)
-        if(film[j].judul <= film[min_idx].judul)
+        if(film[j].judul > film[min_idx].judul)
                 min_idx = j;
-            swap(film[j], film[min_idx]);
+            swap(film[i], film[min_idx]);
     }
 }
 
